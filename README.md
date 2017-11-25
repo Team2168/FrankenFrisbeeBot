@@ -8,7 +8,7 @@ FrankenFrisbeeBot competed in the [2013 season](https://www.thebluealliance.com/
 ## Bill of Materials
 | Item                      | Description                                     | Qty |Price (ea) | Link |
 |---------------------------|-------------------------------------------------|:---:|:---------:|------|
-|FlySky FS-I6               | 6 Channel RC Radio (TX) and Receiver (RX)       | 1   | $45       | ebay |
+|FlySky FS-I6               | 6 Channel RC Radio (TX) and FS-IA6 Receiver (RX)       | 1   | $45       | ebay |
 |Self Centering Throttle Mechanism | Only one joystick on the FS-I6 self-centers in the Y direction out of the box. We're driving tank, self centering on both sticks is needed. | 1 | $3 | [AliEx](https://www.aliexpress.com/item/Flysky-i6S-FS-i6S-Self-Centering-Throttle-Mode-Change-to-Mode-1-Mode-2-Part/32790481855.html)|
 |G.T.Power Electronic Switch| Converts PWM signal into discrete on/off switch. Used to drive solenoids from RX| 2 | $6 | [AliEx](https://www.aliexpress.com/item/Original-G-T-POWER-Remote-Control-Electronic-Switch-for-RC-Airplane-Helicopter-Car/32698354167.html) |
 |Arduino Nano               | Small form factor ATMega328 board.              | 1   | $6        | [Amazon](https://www.amazon.com/gp/product/B06XR46VGD)|
@@ -35,3 +35,8 @@ We still have a pressure relief valve plumbed in to the system. In the event the
 ## Plumbing
 ![](https://github.com/Team2168/FrankenFrisbeeBot/blob/master/wiring/Slide2.PNG "Plumbing Schematic")
 ![](https://github.com/Team2168/FrankenFrisbeeBot/blob/master/wiring/Slide3.PNG "Valve and Manifold Details")
+
+
+## Transmitter/Receiver
+The FS-I6 is used as it is a very capable and cheap Transmitter that supports telemetry (sensor feedback from the robot) and multiple model memory. This will allow multiple demo bots to be set up for control, while minimizing costs as additional RX modules are only ~$10.
+Out of the box it comes with support for 6 control channels. After market firmware modifications allow this trasmitter to support up to 10 channels. To take advantage of these additional signals, a compatibel receiver must be used (FS-IA6B or FS-IA10). Receivers such as the FS-IA6B only have 6 PWM output channels, but support the "i-bus" protocol ([arduino decoder code](https://github.com/aanon4/FlySkyIBus)). Which allows all 10 channels of data to be sent serially out of the reciever and read on a single wire. This would be an ideal setup to minimize wiring requirements.

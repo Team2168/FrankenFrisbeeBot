@@ -3,10 +3,10 @@
 //#define SERIAL_DEBUG
 
 typedef struct {
-  int input_pin;
-  int output_pin;
-  unsigned long pwm_val;
-  Servo servo;
+  int input_pin;         //The input pin from the RX
+  int output_pin;        //The pin wired to the output device (motor controller/solenoid)
+  unsigned long pwm_val; //Value in uS read from the input pin, to be written to the output pin
+  Servo servo;           //The servo object associated with this signal
 } sig_type;
 
 sig_type signals[] = {                 //ENABLE SIGNAL MUST BE LAST!
@@ -27,6 +27,8 @@ const int timeout = 8000; //Time in uS to wait for state change on a PWM input p
                           //Note, for this timeout period to work, the servo frequency setting
                           //  on the transmitter (FS-I6) should be set accordingly (e.g. 200+ Hz)
 
+
+//Runs once on startup
 void setup() {
   //Configure input pins and output servo channels
   for (int i = 0; i < num_signals; i++) {
@@ -41,6 +43,7 @@ void setup() {
   Serial.begin(115200);
 }
 
+//Runs repeatedly during execution
 void loop() {
   signals[enable_signal].pwm_val = pulseIn(signals[enable_signal].input_pin, HIGH, timeout);
   

@@ -40,3 +40,8 @@ We still have a pressure relief valve plumbed in to the system. In the event the
 ## Transmitter/Receiver
 The FS-I6 is used as it is a very capable and cheap Transmitter that supports telemetry (sensor feedback from the robot) and multiple model memory. This will allow multiple demo bots to be set up for control, while minimizing costs as additional RX modules are only ~$10.
 Out of the box it comes with support for 6 control channels. After market firmware modifications allow this trasmitter to support up to 10 channels. To take advantage of these additional signals, a compatibel receiver must be used (FS-IA6B or FS-IA10). Receivers such as the FS-IA6B only have 6 PWM output channels, but support the "i-bus" protocol ([arduino decoder code](https://github.com/aanon4/FlySkyIBus)). Which allows all 10 channels of data to be sent serially out of the reciever and read on a single wire. This would be an ideal setup to minimize wiring requirements.
+
+### Modifications made to the FS-I6 Transmitter
+The horizontal potentiometers on each of the joysticks have been unplugged internally. In their place, the center tap on the potentiometers of VRA and VRB have been connected. This allows the VRA and VRB signals to be accessed from channels 4 and 1 respectively.
+This modification was made to allow for more channels of control to be made available on a PWM output 6ch receiver. If we had a receiver with I-bus outputs, this modification wouldn't be necessary. 
+To remove this modification, simply re-connect the horizontal potentiometer on each joystick and remove the yellow jumper wires coming off the center tap on the VRA and VRB pots.

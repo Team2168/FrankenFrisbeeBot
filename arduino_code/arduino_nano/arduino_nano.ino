@@ -34,13 +34,17 @@ void setup() {
   for (int i = 0; i < num_signals; i++) {
     pinMode(signals[i].input_pin, INPUT);
     
-    if(signals[i].output_pin >= 0) {
-      //Don't create a PWM output channel for the enable/disable signal
+    if(signals[i].output_pin >= 0) { //Don't create a servo output for the enable signal
+      //Init the servo position to our calibrated safe value (zero)
+      //  before attaching to avoid unwanted movement during init.
+      signals[i].servo.writeMicroseconds(SAFE_uS);
       signals[i].servo.attach(signals[i].output_pin);
     }
   }
 
-  Serial.begin(115200);
+  #ifdef SERIAL_DEBUG
+    Serial.begin(115200);
+  #endif
 }
 
 //Runs repeatedly during execution

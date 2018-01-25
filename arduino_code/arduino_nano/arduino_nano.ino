@@ -13,8 +13,8 @@ sig_type signals[] = {                 //ENABLE SIGNAL MUST BE LAST!
   {.input_pin = 7,  .output_pin =  5}, //RX Ch1 - Lift Speed
   {.input_pin = 8,  .output_pin =  2}, //RX Ch2 - Right DT Motor Speed
   {.input_pin = 9,  .output_pin =  3}, //RX Ch3 - Left DT Motor Speed
-  {.input_pin = 10, .output_pin =  4}, //RX Ch4 - Intake Speed
-  {.input_pin = 11, .output_pin =  6}, //RX Ch5 - Intake Solenoid
+  {.input_pin = 10, .output_pin =  4}, //RX Ch4 - Intake Speed (output 5)
+  {.input_pin = 11, .output_pin =  6}, //RX Ch5 - Intake Solenoid (output 6)
   {.input_pin = 12, .output_pin = -1}  //RX Ch6 - Robot Enable/Disable (no output pin)
 };
 const int num_signals = sizeof(signals) / sizeof(sig_type);
@@ -86,9 +86,10 @@ void loop() {
       //Three position switch - Up, outtake w/ armsclosed
       //                      - Middle, stop intaking, leave the arms alone
       //                      - Down, intake w/ arms open
-      getDistance(); // Update sensor distance
+      avg_distance = getDistance(); // Update sensor distance
       switch_input = pulseIn(signals[4].input_pin, HIGH, timeout);
-      
+
+      //ATTEMPT INTAKE - Switch is down all the way
       if(switch_input >= ENABLE_uS) {
         if(last_switch_input < ENABLE_uS) {
           //FIRST TIME COMMANDING INTAKE - open arms no matter what
@@ -96,12 +97,13 @@ void loop() {
           signals[4].servo.writeMicroseconds(DISABLE_uS);  //Open arms
         }
         //INTAKE - Switch is down all the way
-        if(avg_distance >= CUBE_ALL_IN) {
-          //STOP INTAKING
-          signals[3].servo.writeMicroseconds(SAFE_uS);  //Intake
-        } else if(avg_distance >= CUBE_SEEN) {
+        if(avg_distance >= 450) { //CUBE_SEEN
           //We see a cube, close the arms
           signals[4].servo.writeMicroseconds(ENABLE_uS);   //Close arms
+        
+        } else if(avg_distance >= 170) { //CUBE ALL IN = 450, Seen = 170 **CUBE_ALL_IN
+          //keep* INTAKING
+          signals[3].servo.writeMicroseconds(DISABLE_uS);  //Intake **changed safeus to disableus**
         } else {
           //No cube yet, run intake with arms open
           signals[3].servo.writeMicroseconds(DISABLE_uS);  //Intake

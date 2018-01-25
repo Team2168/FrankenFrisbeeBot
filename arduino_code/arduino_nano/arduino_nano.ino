@@ -1,6 +1,6 @@
 #include <Servo.h>
 
-//#define SERIAL_DEBUG
+#define SERIAL_DEBUG
 
 typedef struct {
   int input_pin;         //The input pin from the RX
@@ -33,7 +33,7 @@ double avg_distance = 0.0;
 int switch_input = 0;
 int last_switch_input = 0;
 
-const int CUBE_ALL_IN = 450;
+const int CUBE_ALL_IN = 600;
 const int CUBE_SEEN = 170;
 
 
@@ -59,6 +59,8 @@ void setup() {
 //Runs repeatedly during execution
 void loop() {
   signals[enable_signal].pwm_val = pulseIn(signals[enable_signal].input_pin, HIGH, timeout);
+
+  getDistance(); // Update sensor distance
   
   //If robot isn't enabled, safe all outputs
   if(signals[enable_signal].pwm_val < ENABLE_uS) {
@@ -83,14 +85,16 @@ void loop() {
     }
 
       //Command specific to the intake. 
-      //Three position switch - Up, outtake w/ armsclosed
-      //                      - Middle, stop intaking, leave the arms alone
+      //Three position switch - Up, outtake w/ arms closed
+      //                      - Middle, stop intaking, Close the arms
       //                      - Down, intake w/ arms open
-      getDistance(); // Update sensor distance
+      
       switch_input = pulseIn(signals[4].input_pin, HIGH, timeout);
       
       if(switch_input >= ENABLE_uS) {
         if(last_switch_input < ENABLE_uS) {
+          //Reset average distance to 0.0 so that we force intake to run for a bit on switch toggle
+          avg_distance = 0.0; 
           //FIRST TIME COMMANDING INTAKE - open arms no matter what
           //  sensor sees the arms and doesn't start intaking
           signals[4].servo.writeMicroseconds(DISABLE_uS);  //Open arms
@@ -98,10 +102,8 @@ void loop() {
         //INTAKE - Switch is down all the way
         if(avg_distance >= CUBE_ALL_IN) {
           //STOP INTAKING
-          signals[3].servo.writeMicroseconds(SAFE_uS);  //Intake
-        } else if(avg_distance >= CUBE_SEEN) {
-          //We see a cube, close the arms
-          signals[4].servo.writeMicroseconds(ENABLE_uS);   //Close arms
+          signals[3].servo.writeMicroseconds(SAFE_uS);     //Stop intakeing
+          signals[4].servo.writeMicroseconds(DISABLE_uS);  //Open arms
         } else {
           //No cube yet, run intake with arms open
           signals[3].servo.writeMicroseconds(DISABLE_uS);  //Intake
@@ -114,7 +116,7 @@ void loop() {
       } else {
         //STOP - Switch is in the middle
         signals[3].servo.writeMicroseconds(SAFE_uS);
-        //signals[4].servo.writeMicroseconds(); //Leave the arms alone
+        signals[4].servo.writeMicroseconds(ENABLE_uS);   //Close arms
       }
       
       last_switch_input = switch_input;
@@ -126,7 +128,7 @@ void loop() {
 }
 
 int getDistance() {
-  avg_distance = (0.75 * avg_distance) + (0.25 * analogRead(DISTANCE_SENSOR_PIN));
+  avg_distance = (0.8 * avg_distance) + (0.2 * analogRead(DISTANCE_SENSOR_PIN));
 
 #ifdef SERIAL_DEBUG
   Serial.print("d:");

@@ -20,16 +20,17 @@ FrankenFrisbeeBot competed in the [2013 season](https://www.thebluealliance.com/
 
 
 ## Wiring
-![](https://github.com/Team2168/FrankenFrisbeeBot/blob/master/wiring/Slide1.PNG "Wiring Schematic")
-This wiring layout is pretty simple and largely follows how we would wire the robot in a normal season.
+![](https://github.com/Team2168/FrankenFrisbeeBot/blob/master/wiring/Slide1.PNG "Wiring Schematic")  
+This wiring layout is pretty simple and largely follows how we would wire the robot in a normal season.  
 The areas where things are unique is in how the pneumatic compressor is controlled, and the presence of the Arduino & FS-IA6 receiver.
 
-###Pneumatic Compressor Wiring
-Normal FRC wiring would have the compressor plugged into a Spike Relay Module or a Pneumatics Control Module, both of which would get their control signals (to turn the compressor on/off) from the roboRIO.
-In our case, we're reducing the complexity of the control system (and also saving $$$). In normal FRC plumbing a pressure sensitive switch is included, known as the nason pressure switch.
-This switch opens or closes a circuit depending on the pressure sensed. A pressure above ~120psi causes the switch to open circuit. A pressure below ~90psi causes the switch to close.
-In our FrankenBot, we will use this switch in a stand alone fassion, to directly turn the compressor on/off. There is no computer in the loop. The only problem is the nason switch is only rated for about 5A of current at 12VDC. The compressor we are using needs about 12A however.
-To work around this, we're using the nason switch to open/close an automotive relay. In this configuration the nason switchdrives the coil of the relay, a very small load. The relay, which is rated for 30/40A @ 12VDC then drives the compressor on/off. Cheap and easy.
+### Pneumatic Compressor Wiring
+Normal FRC wiring would have the compressor plugged into a Spike Relay Module or a Pneumatics Control Module, both of which would get their control signals (to turn the compressor on/off) from the roboRIO.  
+In our case, we're reducing the complexity of the control system (and also saving $$$). In normal FRC plumbing a pressure sensitive switch is included, known as the nason pressure switch.  
+This switch opens or closes a circuit depending on the pressure sensed. A pressure above ~120psi causes the switch to open circuit. A pressure below ~90psi causes the switch to close.  
+
+In our FrankenBot, we will use this switch in a stand alone fassion, to directly turn the compressor on/off. There is no computer in the loop. The only problem is the nason switch is only rated for about 5A of current at 12VDC. The compressor we are using needs about 12A however.  
+To work around this, we're using the nason switch to open/close an automotive relay. In this configuration the nason switchdrives the coil of the relay, a very small load. The relay, which is rated for 30/40A @ 12VDC then drives the compressor on/off. Cheap and easy.  
 We still have a pressure relief valve plumbed in to the system. In the event the nason switch or relay fails in a manner that leaves the pump running, the relief valve will ensure the high-side pressure does not exceed ~120psi.
 
 ## Plumbing
@@ -39,9 +40,10 @@ We still have a pressure relief valve plumbed in to the system. In the event the
 
 ## Transmitter/Receiver
 The FS-I6 is used as it is a very capable and cheap Transmitter that supports telemetry (sensor feedback from the robot) and multiple model memory. This will allow multiple demo bots to be set up for control, while minimizing costs as additional RX modules are only ~$10.
+
 Out of the box it comes with support for 6 control channels. After market firmware modifications allow this trasmitter to support up to 10 channels. To take advantage of these additional signals, a compatibel receiver must be used (FS-IA6B or FS-IA10). Receivers such as the FS-IA6B only have 6 PWM output channels, but support the "i-bus" protocol ([arduino decoder code](https://github.com/aanon4/FlySkyIBus)). Which allows all 10 channels of data to be sent serially out of the reciever and read on a single wire. This would be an ideal setup to minimize wiring requirements.
 
 ### Modifications made to the FS-I6 Transmitter
-The horizontal potentiometers on each of the joysticks have been unplugged internally. In their place, the center tap on the potentiometers of VRA and VRB have been connected. This allows the VRA and VRB signals to be accessed from channels 4 and 1 respectively.
-This modification was made to allow for more channels of control to be made available on a PWM output 6ch receiver. If we had a receiver with I-bus outputs, this modification wouldn't be necessary. 
+The horizontal potentiometers on each of the joysticks have been unplugged internally. In their place, the center tap on the potentiometers of VRA and VRB have been connected. This allows the VRA and VRB signals to be accessed from channels 4 and 1 respectively.  
+This modification was made to allow for more channels of control to be made available on a PWM output 6ch receiver. If we had a receiver with I-bus outputs, this modification wouldn't be necessary.   
 To remove this modification, simply re-connect the horizontal potentiometer on each joystick and remove the yellow jumper wires coming off the center tap on the VRA and VRB pots.
